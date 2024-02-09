@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package orderapp;
+
+service OrderService {
+    rpc createOrder(OrderReq) returns (OrderRes) {}
+    rpc getOrders(getOrderReq) returns (GetOrderRes) {}
+}
+
+message Products {
+    string productId = 1;
+    int32 qty = 2;
+    int32 price = 3;
+}
+
+message OrderReq {
+    repeated Products products = 2; 
+}
+
+message OrderRes {
+    string orderId = 1;
+}
+
+message Order {
+    string orderId = 1;
+    string customerId = 2;
+    repeated Products products = 3;
+}
+
+message getOrderReq {}
+
+message GetOrderRes {
+    repeated Order orders = 1;
+}

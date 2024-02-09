@@ -1,0 +1,54 @@
+version: '3.9'
+
+services:
+  grpc-server:
+    container_name: grpc-server
+    image: grpc-server:1.0
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: production
+      args:
+        - APP_NAME=grpc-server
+    ports:
+      - '3000:3000'
+      - '5000:5000'
+      - '9229:9229'
+    networks:
+      - app-network
+    volumes:
+      - .:/usr/src/
+    restart: unless-stopped
+    healthcheck:
+      test:     
+        ["CMD-SHELL", "curl --silent --fail -X GET http://localhost:3000 || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 20
+      start_period: 30s
+  grpc-consumer:
+    container_name: grpc-consumer
+    image: grpc-consumer:1.0
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: production
+      args:
+        - APP_NAME=grpc-consumer
+    ports:
+      - '3001:3000'
+      - '9230:9229'
+    networks:
+      - app-network
+    volumes:
+      - .:/usr/src/
+    restart: unless-stopped
+    healthcheck:
+      test:     
+        ["CMD-SHELL", "curl --silent --fail -X GET http://localhost:3000 || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 20
+      start_period: 30s
+networks:
+  app-network:  
